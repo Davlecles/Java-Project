@@ -22,7 +22,7 @@ public class ActionHandler implements ActionListener {
 	 * Invoked when an action occurs to perform the actions of the calculator.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		
+	
 		for(int i=0;i<10;i++) {
 			if(e.getSource() == obj.numberButtons[i]) {
 				obj.textField.setText(obj.textField.getText().concat(String.valueOf(i)));
@@ -54,6 +54,8 @@ public class ActionHandler implements ActionListener {
 		if(e.getSource()==obj.equButton) {
 			obj.num2 = (Double.parseDouble(obj.textField.getText()));
 			
+			boolean exceptionThrown = false;
+			
 			switch(obj.operator) {
 			case'+':
 				obj.result=obj.num1+obj.num2;
@@ -65,11 +67,21 @@ public class ActionHandler implements ActionListener {
 				obj.result=obj.num1*obj.num2;
 				break;
 			case'/':
-				obj.result=obj.num1/obj.num2;
+				try {
+					obj.result=obj.num1/obj.num2;	
+					if (obj.num2 == 0) {
+						throw new ArithmeticException("Can't divide by 0");
+					}
+				} catch (ArithmeticException eError) {
+					obj.textField.setText(eError.getMessage());
+					exceptionThrown = true;
+				}			
 				break;
 			}
-			obj.textField.setText(String.valueOf(obj.result));
-			obj.num1 = obj.result;
+			if (!exceptionThrown) {
+				obj.textField.setText(String.valueOf(obj.result));
+				obj.num1 = obj.result;
+			}	
 		}
 		if(e.getSource()==obj.clrButton) {
 			obj.textField.setText("");
